@@ -11,6 +11,7 @@ class InstaBot:
         self.__setup()
         self.__login()
         self.__ignore_popup()
+        self.__my_profile_page()
     
     def __setup(self):
         self.driver = webdriver.Chrome()
@@ -28,15 +29,57 @@ class InstaBot:
             .click()
         sleep(2)
     
-    def my_profile_page(self):
-        self.driver.find_element_by_xpath("//a[contains(@href,'/{}')]"\
-            .format(self.username)).click()
+    def __my_profile_page(self):
+        print("FAM WE IN")
+        self.driver.find_element_by_xpath("//a[contains(@href,'/{username}')]"\
+            .format(username = self.username)).click()
+        print("I DID IT")
+        sleep(4)
+        print("IM SLEEPING")
     
+    def __scroll_people(self):
+        initial_scroll = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li[10]")
+        self.driver.execute_script('arguments[0].scrollIntoView()', initial_scroll)
+        sleep(2)
+        scroll_box = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]")
+        last_ht, ht = 0, 1
+        while last_ht != ht:
+            last_ht = ht
+            sleep(1)
+            ht = self.driver.execute_script("""
+                arguments[0].scrollTo(0, arguments[0].scrollHeight); 
+                return arguments[0].scrollHeight;
+                """, scroll_box)
+        links = scroll_box.find_elements_by_tag_name('a')
+        names = [name.text for name in links if name.text != '']
+        close = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[1]/div/div[2]/button")
+        close.click()
+        return names
 
-    
-    
+    def get_followers(self):
+        self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
+            .click()
+        sleep(2)
+        followers = self.__scroll_people()
+        return followers
 
+    def get_following(self):
+        self.driver.find_element_by_xpath("//a[contains(@href,'/following')]")\
+            .click()
+        sleep(2)
+        following = self.__scroll_people()
+        return following
+
+    def details(self):
+        followers = self.get_followers()
+        following = self.get_following()
+        print("Here are the people following you:")
+        print(followers)
+        print(len(followers))
+        print("Here are the people you follow:")
+        print(following)
+        print(len(following))
         
 
 my_bot = InstaBot()
-my_bot.my_profile_page()
+my_bot.details()
