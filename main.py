@@ -4,10 +4,10 @@ from getpass import getpass
 
 class InstaBot:
     def __init__(self):
-        # Retrieve login Info
+        # Retrieve login info
         self.username = input("Username: ")
         self.password = getpass("Password: ")
-        # Automate login
+        # Automate login and navigate to profile
         self.__setup()
         self.__login()
         self.__ignore_popup()
@@ -30,12 +30,9 @@ class InstaBot:
         sleep(2)
     
     def __my_profile_page(self):
-        print("FAM WE IN")
         self.driver.find_element_by_xpath("//a[contains(@href,'/{username}')]"\
             .format(username = self.username)).click()
-        print("I DID IT")
         sleep(4)
-        print("IM SLEEPING")
     
     def __scroll_people(self):
         initial_scroll = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li[10]")
