@@ -34,9 +34,9 @@ class InstaBot:
             .format(username = self.username)).click()
         sleep(4)
     
-    def __scroll_people(self):
-        initial_scroll = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li[10]")
-        self.driver.execute_script('arguments[0].scrollIntoView()', initial_scroll)
+    def __scroll_accounts(self):
+        init_scroll = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]/ul/div/li[10]")
+        self.driver.execute_script('arguments[0].scrollIntoView()', init_scroll)
         sleep(2)
         scroll_box = self.driver.find_element_by_xpath("/html/body/div[4]/div/div[2]")
         last_ht, ht = 0, 1
@@ -57,26 +57,33 @@ class InstaBot:
         self.driver.find_element_by_xpath("//a[contains(@href,'/followers')]")\
             .click()
         sleep(2)
-        followers = self.__scroll_people()
+        followers = self.__scroll_accounts()
         return followers
 
     def get_following(self):
         self.driver.find_element_by_xpath("//a[contains(@href,'/following')]")\
             .click()
         sleep(2)
-        following = self.__scroll_people()
+        following = self.__scroll_accounts()
         return following
 
     def details(self):
         followers = self.get_followers()
         following = self.get_following()
-        print("Here are the people following you:")
-        print(followers)
-        print(len(followers))
-        print("Here are the people you follow:")
-        print(following)
-        print(len(following))
-        
+        not_following = []
+        not_following_back = []
+        for user in followers:
+            if(user not in following):
+                not_following.append(user)
+        for user in following:
+            if(user not in followers):
+                not_following_back.append(user)
+        print("Users you do not follow back: ")
+        print(not_following)
+        print("Users not following you back: ")
+        print(not_following_back)
 
+        
+# Testing
 my_bot = InstaBot()
 my_bot.details()
