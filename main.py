@@ -10,6 +10,7 @@ class InstaBot:
         # Automate login
         self.__setup()
         self.__login(username, password)
+        self.__ignore_popup()
     
     def __setup(self):
         self.driver = webdriver.Chrome()
@@ -21,5 +22,10 @@ class InstaBot:
         self.driver.find_element_by_name('password').send_keys(password)
         self.driver.find_element_by_xpath("//button[@type=\"submit\"]").click()
         sleep(4)
+    
+    def __ignore_popup(self):
+        self.driver.find_element_by_xpath("//button[contains(text(), 'Not Now')]")\
+            .click()
+        sleep(2)
 
 my_bot = InstaBot()
